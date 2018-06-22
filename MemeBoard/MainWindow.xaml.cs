@@ -18,7 +18,7 @@ namespace MemeBoard
         private Storyboard Storyboard => (Storyboard)this.Resources["imageRotationStoryboard"];
         private Storyboard StoryboardCC => (Storyboard)this.Resources["imageRotationStoryboardCounterClock"];
 
-        private MemeRepo memeRepo = new MemeRepo(@"D:\Github\MemeBoard\Memes");
+        private MemeRepo memeRepo = new MemeRepo(@"C:\Users\stream\Desktop\memes2");
         private List<HotKey> keyBindings = new List<HotKey>();
 
         private Meme currentMeme = null;
@@ -71,10 +71,11 @@ namespace MemeBoard
             this.keyBindings.ForEach(k => k.Dispose());
             this.keyBindings.Clear();
 
+
             foreach (var meme in this.memeRepo.Memes)
             {
                 if (Enum.TryParse<Key>(meme.Prefix, true, out var result))
-                    this.keyBindings.Add(new HotKey(ModifierKeys.Control,
+                    this.keyBindings.Add(new HotKey(ModifierKeys.Control, 
                         result, this, _ => this.ToggleMeme(meme)));
             }
         }
