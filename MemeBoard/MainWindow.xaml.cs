@@ -18,6 +18,8 @@ namespace MemeBoard
         private Storyboard Storyboard => (Storyboard)this.Resources["imageRotationStoryboard"];
         private Storyboard StoryboardCC => (Storyboard)this.Resources["imageRotationStoryboardCounterClock"];
 
+        private const double SpeedRatio = .1;
+
         private MemeRepo memeRepo = new MemeRepo(@"C:\Users\stream\Desktop\memes2");
         private List<HotKey> keyBindings = new List<HotKey>();
 
@@ -91,6 +93,21 @@ namespace MemeBoard
             new HotKey(ModifierKeys.Control, Key.End, this, _ => {
                 this.Storyboard.Stop();
                 this.StoryboardCC.Stop();
+            });
+            new HotKey(ModifierKeys.Control, Key.Up, this, _ =>
+            {
+                this.Storyboard.SpeedRatio += SpeedRatio;
+                this.StoryboardCC.SpeedRatio += SpeedRatio;
+                this.Storyboard.Begin();
+            });
+            new HotKey(ModifierKeys.Control, Key.Down, this, _ =>
+            {
+                if (this.Storyboard.SpeedRatio > 0)
+                {
+                    this.Storyboard.SpeedRatio -= SpeedRatio;
+                    this.StoryboardCC.SpeedRatio -= SpeedRatio;
+                }
+                this.Storyboard.Begin();
             });
         }
         
