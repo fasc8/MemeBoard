@@ -21,8 +21,7 @@ namespace MemeBoard
 
         private const double SpeedRatio = .1;
 
-        //private MemeRepo memeRepo = new MemeRepo(@"C:\Users\stream\Desktop\memes2");
-        private MemeRepo memeRepo = new MemeRepo(@"C:\Users\fasc\Pictures\Memes");
+        private MemeRepo memeRepo = new MemeRepo(@"C:\Users\stream\Desktop\memes2");
         private List<HotKey> keyBindings = new List<HotKey>();
 
         private Meme currentMeme = null;
