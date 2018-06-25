@@ -16,11 +16,13 @@ namespace MemeBoard
     public partial class MainWindow : Window
     {
         private Storyboard Storyboard => (Storyboard)this.Resources["imageRotationStoryboard"];
-        private Storyboard StoryboardCC => (Storyboard)this.Resources["imageRotationStoryboardCounterClock"];
+        private DoubleAnimation StoryboardAnimation => (DoubleAnimation)this.Storyboard.Children[0];
+
 
         private const double SpeedRatio = .1;
 
-        private MemeRepo memeRepo = new MemeRepo(@"C:\Users\stream\Desktop\memes2");
+        //private MemeRepo memeRepo = new MemeRepo(@"C:\Users\stream\Desktop\memes2");
+        private MemeRepo memeRepo = new MemeRepo(@"C:\Users\fasc\Pictures\Memes");
         private List<HotKey> keyBindings = new List<HotKey>();
 
         private Meme currentMeme = null;
@@ -39,7 +41,6 @@ namespace MemeBoard
             }
 
             Storyboard.Stop();
-            StoryboardCC.Stop();
             ImageBehavior.SetAnimatedSource(this.image, null);
 
             if (meme.IsAnimated)
@@ -88,16 +89,22 @@ namespace MemeBoard
 
             this.memeRepo.Updated += () => this.Dispatcher.Invoke(this.RefreshKeyBindings);
 
-            new HotKey(ModifierKeys.Control, Key.PageUp, this, _ => this.Storyboard.Begin());
-            new HotKey(ModifierKeys.Control, Key.PageDown, this, _ => this.StoryboardCC.Begin());
+            new HotKey(ModifierKeys.Control, Key.PageUp, this, _ => {
+                this.StoryboardAnimation.From = 0;
+                this.StoryboardAnimation.To = 360;
+                this.Storyboard.Begin();
+            });
+            new HotKey(ModifierKeys.Control, Key.PageDown, this, _ => {
+                this.StoryboardAnimation.From = 360;
+                this.StoryboardAnimation.To = 0;
+                this.Storyboard.Begin();
+            });
             new HotKey(ModifierKeys.Control, Key.End, this, _ => {
                 this.Storyboard.Stop();
-                this.StoryboardCC.Stop();
             });
             new HotKey(ModifierKeys.Control, Key.Up, this, _ =>
             {
                 this.Storyboard.SpeedRatio += SpeedRatio;
-                this.StoryboardCC.SpeedRatio += SpeedRatio;
                 this.Storyboard.Begin();
             });
             new HotKey(ModifierKeys.Control, Key.Down, this, _ =>
@@ -105,7 +112,6 @@ namespace MemeBoard
                 if (this.Storyboard.SpeedRatio > 0)
                 {
                     this.Storyboard.SpeedRatio -= SpeedRatio;
-                    this.StoryboardCC.SpeedRatio -= SpeedRatio;
                 }
                 this.Storyboard.Begin();
             });

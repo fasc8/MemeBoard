@@ -19,10 +19,6 @@
                     Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)">
             <DoubleAnimation From="0" To="360" BeginTime="0:0:0" Duration="0:0:1.5" RepeatBehavior="Forever" />
         </Storyboard>
-        <Storyboard x:Key="imageRotationStoryboardCounterClock" Storyboard.TargetName="image" 
-                    Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)">
-            <DoubleAnimation From="360" To="0" BeginTime="0:0:0" Duration="0:0:1.5" RepeatBehavior="Forever" />
-        </Storyboard>
     </Window.Resources>
     <StackPanel>
         <Image Name="image" 
