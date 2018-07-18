@@ -1,23 +1,22 @@
-﻿using mrousavy;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.DependencyInjection;
+using mrousavy;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Speech.Synthesis;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using WpfAnimatedGif;
+using System.Threading.Tasks;
+using System.IO;
+using System.Linq;
+using System.Speech.Synthesis;
 
 namespace MemeBoard
 {
@@ -27,6 +26,9 @@ namespace MemeBoard
     public partial class MainWindow : Window
     {
         private Storyboard Storyboard => (Storyboard)this.Resources["imageRotationStoryboard"];
+        private DoubleAnimation StoryboardAnimation => (DoubleAnimation)this.Storyboard.Children[0];
+
+        private const double SpeedRatio = .1;
 
         private MemeRepo memeRepo;
         private List<HotKey> keyBindings = new List<HotKey>();
@@ -35,7 +37,7 @@ namespace MemeBoard
 
         private WebInterface webInterface;
         private SpeechSynthesizer tts = new SpeechSynthesizer();
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -43,7 +45,7 @@ namespace MemeBoard
 
         private void ToggleImageMeme(Meme meme)
         {
-            
+
             if (this.WindowState != WindowState.Minimized && this.currentMeme == meme)
             {
                 this.currentMeme = null;
@@ -92,8 +94,8 @@ namespace MemeBoard
             this.tts.SpeakAsyncCancelAll();
             var text = File.ReadAllText(meme.Path);
             meme.Activate();
-            
-            Task.Run(() => 
+
+            Task.Run(() =>
             {
                 this.tts.Speak(text);
                 meme.Deactivate();
@@ -124,16 +126,16 @@ namespace MemeBoard
             var hwnd = new WindowInteropHelper(this).Handle;
             Native.SetWindowExTransparent(hwnd);
         }
-        
+
         private void RefreshKeyBindings()
         {
             this.keyBindings.ForEach(k => k.Dispose());
             this.keyBindings.Clear();
-            
+
             foreach (var meme in this.memeRepo.Memes)
             {
                 if (Enum.TryParse<Key>(meme.Prefix, true, out var result))
-                    this.keyBindings.Add(new HotKey(ModifierKeys.Control, 
+                    this.keyBindings.Add(new HotKey(ModifierKeys.Control,
                         result, this, _ => this.ToggleMeme(meme)));
             }
         }
@@ -153,12 +155,39 @@ namespace MemeBoard
 
             this.memeRepo.Updated += () => this.Dispatcher.Invoke(this.RefreshKeyBindings);
 
-            new HotKey(ModifierKeys.Control, Key.PageUp, this, _ => this.Storyboard.Begin());
-            new HotKey(ModifierKeys.Control, Key.PageDown, this, _ => this.Storyboard.Stop());
+            new HotKey(ModifierKeys.Control, Key.PageUp, this, _ =>
+            {
+                this.StoryboardAnimation.From = 0;
+                this.StoryboardAnimation.To = 360;
+                this.Storyboard.Begin();
+            });
+            new HotKey(ModifierKeys.Control, Key.PageDown, this, _ =>
+            {
+                this.StoryboardAnimation.From = 360;
+                this.StoryboardAnimation.To = 0;
+                this.Storyboard.Begin();
+            });
+            new HotKey(ModifierKeys.Control, Key.End, this, _ =>
+            {
+                this.Storyboard.Stop();
+            });
+            new HotKey(ModifierKeys.Control, Key.Up, this, _ =>
+            {
+                this.Storyboard.SpeedRatio += SpeedRatio;
+                this.Storyboard.Begin();
+            });
+            new HotKey(ModifierKeys.Control, Key.Down, this, _ =>
+            {
+                if (this.Storyboard.SpeedRatio > 0)
+                {
+                    this.Storyboard.SpeedRatio -= SpeedRatio;
+                }
+                this.Storyboard.Begin();
+            });
 
             this.webInterface.Start();
         }
-        
+
         private void TrayExit(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -180,5 +209,6 @@ namespace MemeBoard
         {
             this.trayIcon.Dispose();
         }
+
     }
 }

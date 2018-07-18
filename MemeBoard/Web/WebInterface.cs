@@ -85,7 +85,7 @@ namespace MemeBoard
                     {
                         FileProvider = new EmbeddedFileProvider(Assembly.GetExecutingAssembly(), "MemeBoard.Web.client")
                     };
-                    
+
                     app.UseSpa(spa =>
                     {
                         if (env.IsDevelopment())
