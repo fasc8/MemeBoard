@@ -37,15 +37,8 @@ namespace MemeBoard
 
         private WebInterface webInterface;
         private SpeechSynthesizer tts = new SpeechSynthesizer();
-<<<<<<< HEAD
-
-||||||| merged common ancestors
-        
-=======
 
         private bool outputDisabled = false;
-        
->>>>>>> 6421259ce2e6f078c8578767f6d27c9fe02ebdb5
         public MainWindow()
         {
             InitializeComponent();
@@ -227,15 +220,10 @@ namespace MemeBoard
         {
             this.trayIcon.Dispose();
         }
-<<<<<<< HEAD
-
-||||||| merged common ancestors
-=======
 
         private void TrayStartStopOutput(object sender, RoutedEventArgs e)
         {
             this.outputDisabled = !this.outputDisabled;
         }
->>>>>>> 6421259ce2e6f078c8578767f6d27c9fe02ebdb5
     }
 }
