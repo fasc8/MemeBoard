@@ -37,14 +37,7 @@ namespace MemeBoard
 
         private WebInterface webInterface;
         private SpeechSynthesizer tts = new SpeechSynthesizer();
-<<<<<<< HEAD
 
-||||||| merged common ancestors
-        
-=======
-
-        
->>>>>>> 6421259ce2e6f078c8578767f6d27c9fe02ebdb5
         public MainWindow()
         {
             InitializeComponent();
@@ -63,14 +56,11 @@ namespace MemeBoard
             }
 
             this.ResetAnimation();
-            
-            if (!this.outputDisabled)
-            {
-                if (meme.IsAnimated)
-                    this.ShowGif(meme.Path);
-                else
-                    this.ShowBitmap(meme.Path);
-            }
+
+            if (meme.IsAnimated)
+                this.ShowGif(meme.Path);
+            else
+                this.ShowBitmap(meme.Path);
 
             this.currentMeme?.Deactivate();
             meme.Activate();
@@ -81,13 +71,7 @@ namespace MemeBoard
 
         private void ShowBitmap(string path)
         {
-            var source = new BitmapImage();
-            source.BeginInit();
-            source.UriSource = new Uri(path);
-            source.CacheOption = BitmapCacheOption.OnLoad;
-            source.EndInit();
-
-            this.image.Source = source;
+            this.image.Source = new BitmapImage(new Uri(path));
         }
 
         private void ResetAnimation()
@@ -98,12 +82,11 @@ namespace MemeBoard
 
         private void ShowGif(string path)
         {
-            var source = new BitmapImage();
-            source.BeginInit();
-            source.CacheOption = BitmapCacheOption.OnLoad;
-            source.UriSource = new Uri(path);
-            source.EndInit();
-            ImageBehavior.SetAnimatedSource(this.image, source);
+            var img = new BitmapImage();
+            img.BeginInit();
+            img.UriSource = new Uri(path);
+            img.EndInit();
+            ImageBehavior.SetAnimatedSource(this.image, img);
         }
 
         private void PlayTextMeme(Meme meme)
@@ -226,10 +209,6 @@ namespace MemeBoard
         {
             this.trayIcon.Dispose();
         }
-<<<<<<< HEAD
-
-||||||| merged common ancestors
-=======
 
     }
 }
